@@ -2,27 +2,25 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
 //Branch - Slave0.1
 //Buffered channels
 
-func main() {
-	buffer := make(chan int, 2)
-	go write(buffer)
-	time.Sleep(1 * time.Second)
-	for v := range buffer {
-		time.Sleep(1 * time.Second)
-		fmt.Println("Read from channel", v)
-
-	}
+func process(num int, wg *sync.WaitGroup) {
+	fmt.Println("Added in the wait group ", num)
+	time.Sleep(2 * time.Second)
+	wg.Done()
+	fmt.Println("Removed in the wait group ", num)
 }
-
-func write(buff chan int) {
-	for i := 1; i < 6; i++ {
-		buff <- i
-		fmt.Println("Successfully wrote to buffer channel ", i)
+func main() {
+	var wg sync.WaitGroup
+	for i := 1; i <= 5; i++ {
+		wg.Add(1)
+		go process(i, &wg)
 	}
-	close(buff)
+	wg.Wait()
+	fmt.Println("All go routines finished executing")
 }
