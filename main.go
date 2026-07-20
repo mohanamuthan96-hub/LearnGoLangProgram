@@ -3,24 +3,29 @@ package main
 import (
 	"fmt"
 	"sync"
-	"time"
 )
 
-//Branch - Slave0.1
-//Buffered channels
+var mutex1 sync.Mutex
+var mutex2 sync.Mutex
 
-func process(num int, wg *sync.WaitGroup) {
-	fmt.Println("Added in the wait group ", num)
-	time.Sleep(2 * time.Second)
-	wg.Done()
-	fmt.Println("Removed in the wait group ", num)
+func resource1(name string) {
+	mutex1.Lock()
+	fmt.Println(name, "Acquired resorde 1")
+	resource2("Resource2")
+	mutex1.Unlock()
 }
+
+func resource2(name string) {
+	mutex2.Lock()
+	fmt.Println(name, "Acquired resorde 2")
+	resource1("Resource1")
+	mutex2.Unlock()
+}
+
 func main() {
-	var wg sync.WaitGroup
-	for i := 1; i <= 5; i++ {
-		wg.Add(1)
-		go process(i, &wg)
-	}
-	wg.Wait()
-	fmt.Println("All go routines finished executing")
+	go resource1("Resource1")
+
+	go resource2("Resource2")
+
+	select {}
 }
