@@ -5,27 +5,50 @@ import (
 	"sync"
 )
 
-var mutex1 sync.Mutex
-var mutex2 sync.Mutex
+var mutexA sync.Mutex
+var mutexB sync.Mutex
 
 func resource1(name string) {
-	mutex1.Lock()
-	fmt.Println(name, "Acquired resorde 1")
-	resource2("Resource2")
-	mutex1.Unlock()
+	mutexA.Lock()
+	defer mutexA.Unlock()
+	fmt.Println(name, " has mutex A")
+	fmt.Println(name, " trying to acquire mutex B")
+	if !mutexB.TryLock() {
+		fmt.Println("Cannot Aquire mutex B, Calling off")
+		for range 100 {
+
+		}
+		resource1(name)
+	} else {
+		defer mutexB.Unlock()
+		fmt.Println(name, " acquired mutex B")
+		fmt.Println("working")
+	}
 }
 
 func resource2(name string) {
-	mutex2.Lock()
-	fmt.Println(name, "Acquired resorde 2")
-	resource1("Resource1")
-	mutex2.Unlock()
+	mutexB.Lock()
+	defer mutexB.Unlock()
+	fmt.Println(name, " has mutex B")
+	fmt.Println(name, " trying to acquire mutex A")
+	if !mutexA.TryLock() {
+		fmt.Println("Cannot Aquire mutex A, Calling off")
+		for range 100 {
+
+		}
+		resource2(name)
+	} else {
+		defer mutexA.Unlock()
+		fmt.Println(name, " acquired mutex A")
+		fmt.Println("working")
+	}
+
 }
 
 func main() {
-	go resource1("Resource1")
+	go resource1("Routine A")
 
-	go resource2("Resource2")
-
+	go resource2("Routine B")
+	fmt.Println("Waiting")
 	select {}
 }
