@@ -2,50 +2,42 @@ package main
 
 import (
 	"fmt"
-	"math/rand/v2"
+	"time"
 )
 
 //Branch - Slave0.1
 
-func Square(sq chan int, number int) {
-	digit := make(chan int)
-	go Numbergeneration(number, digit)
-	sum := 0
-	for value := range digit {
-		sum = sum + value*value
-	}
-	sq <- sum
+func server1(ser chan string) {
+	time.Sleep(1 * time.Second)
+	ser <- "Server 1 running"
+
 }
 
-func Cube(cb chan int, number int) {
-	digit := make(chan int)
-	go Numbergeneration(number, digit)
-	sum := 0
-	for value := range digit {
-		sum = sum + value*value*value
-	}
-	cb <- sum
+func server2(ser chan string) {
+	time.Sleep(1 * time.Second)
+	ser <- "Server 2 running"
 }
 
-func Numbergeneration(number int, digit chan int) {
-	for number != 0 {
-		value := number % 10
-		digit <- value
-		number = number / 10
-	}
-	close(digit)
-}
-
-var square chan int
-var cube chan int
+var ser1 chan string
+var ser2 chan string
 
 func main() {
-	threedigit := rand.IntN(999)
-	fmt.Println("Generate number ", threedigit)
-	square = make(chan int)
-	cube = make(chan int)
-	go Square(square, threedigit)
-	go Cube(cube, threedigit)
-	fmt.Println(<-square, <-cube)
 
+	ser1 = make(chan string)
+	ser2 = make(chan string)
+	go server1(ser1)
+	go server2(ser2)
+	for {
+
+		select {
+		case condition1 := <-ser1:
+			fmt.Println(condition1)
+			return
+		case condition2 := <-ser2:
+			fmt.Println(condition2)
+			return
+		default:
+			fmt.Println("Default Connection")
+		}
+	}
 }
