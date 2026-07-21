@@ -3,31 +3,20 @@ package main
 import (
 	"fmt"
 	"sync"
-	"time"
 )
 
-var (
-	count int
-	lock  sync.Mutex
-)
-
-func highPriority() {
-	lock.Lock()
-	time.Sleep(200 * time.Millisecond)
-	defer lock.Unlock()
-	count = +10
-}
-
-func lowPriority() {
-	lock.Lock()
-	defer lock.Unlock()
-	count = +1
+func result(i int, wg *sync.WaitGroup) {
+	fmt.Println("Goroutine ", i)
+	defer wg.Done()
+	fmt.Println("Goroutine ", i, "Executed")
 }
 func main() {
-	for range 100 {
-		go highPriority()
-		go lowPriority()
+	var wg sync.WaitGroup
+
+	for i := 1; i <= 25; i++ {
+		wg.Add(1)
+		go result(i, &wg)
 	}
-	time.Sleep(300 * time.Millisecond)
-	fmt.Println(count)
+	wg.Wait()
+	fmt.Println("Gorotine finished")
 }
