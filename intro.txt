@@ -1,0 +1,14 @@
+what is compiled Programming language?
+ Translate a entier program to native machine code
+
+Statically typed programming language?
+ variables types are known at compile type before runtime.
+
+static linking?
+Copies all required library code into the final executable file.
+
+indentation
+ Space left at the begging of a line.
+
+Go Module
+ They are used to track our dependency and verisons
