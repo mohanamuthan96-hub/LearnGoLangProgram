@@ -2,24 +2,20 @@ package main
 
 import "fmt"
 
-type Person struct {
-	name  string
-	place string
+//Empty Interface,any alias of interface
+func describe(types interface{}) {
+	fmt.Printf("The type is %T and value is %v\n", types, types)
 }
-
-type Worker interface {
-	work() string
-}
-
-func (per Person) work() (name string) {
-	fmt.Printf("The conrete type of interface %T and value id %v", per, per)
-	return per.name
-}
-
 func main() {
-	per := Person{
-		name: "Mohan", place: "Vellore",
+	type Employee struct {
+		name string
 	}
-	var worker Worker = per
-	worker.work()
+	var sum int = 100
+	describe(sum)
+	var name string = "Mohan"
+	describe(name)
+	employee := Employee{
+		name: "Arun",
+	}
+	describe(employee)
 }
