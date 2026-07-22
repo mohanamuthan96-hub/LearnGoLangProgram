@@ -1,37 +1,21 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 //Type Assertion
-func describeint(types any) {
-	value, ok := types.(int)
-	if ok {
-		fmt.Printf("The type is %T and value is %v and value of assertion is %v\n", types, types, value)
+func describe(types any) {
+	switch types.(type) {
+	case int:
+		fmt.Printf("I am a int and my value is %d\n", types.(int))
+	case string:
+		fmt.Printf("I am a string and my value is %s\n", types.(string))
+	default:
+		fmt.Printf("Unknowntype")
 	}
-	fmt.Printf("The type is %T and value is %v and value of assertion is %v\n", types, types, value)
 }
 
-func describestring(types any) {
-	value := types.(string)
-	fmt.Printf("The type is %T and value is %v and value of assertion is %v\n", types, types, value)
-}
-
-func describestruct(types any) {
-	value := types.(any)
-	fmt.Printf("The type is %T and value is %v and value of assertion is %v", types, types, value)
-}
 func main() {
-	type Employee struct {
-		name string
-	}
-	var sum interface{} = 100
-	describeint(sum)
-	var sums interface{} = "100"
-	describeint(sums)
-	var name any = "Mohan"
-	describestring(name)
-	var employee interface{} = Employee{name: "Selvi"}
-	describestruct(employee)
+	describe("Naveen")
+	describe(100)
+	describe(struct{ name string }{name: "Aravind"})
 }
